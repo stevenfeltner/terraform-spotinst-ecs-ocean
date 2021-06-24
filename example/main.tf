@@ -1,6 +1,6 @@
 #### Create Ocean ECS Cluster ####
 module "ocean_ecs" {
-    source = "../ecs-ocean"
+    source = "../"
 
     spot_token                      = "12345678901234567890"
     spot_account                    = "act-123456789"
