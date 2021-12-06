@@ -6,11 +6,7 @@ terraform {
     }
 }
 
-# Configure the Spotinst provider
-provider "spotinst" {
-    token                                = var.spot_token
-    account                              = var.spot_account
-}
+data "aws_default_tags" "default_tags" {}
 
 #Create Spot.io Ocean ECS Cluster
 resource "spotinst_ocean_ecs" "example" {
@@ -25,11 +21,20 @@ resource "spotinst_ocean_ecs" "example" {
 
     subnet_ids                          = var.subnet_ids
 
+    # Default Provider Tags
     dynamic tags {
-        for_each = var.tags == null ? [] : var.tags
+        for_each = data.aws_default_tags.default_tags.tags
         content {
-            key = tags.value["key"]
-            value = tags.value["value"]
+            key = tags.key
+            value = tags.value
+        }
+    }
+    # Additional Tags
+    dynamic tags {
+        for_each = var.tags == null ? {} : var.tags
+        content {
+            key = tags.key
+            value = tags.value
         }
     }
     whitelist 						    = var.whitelist

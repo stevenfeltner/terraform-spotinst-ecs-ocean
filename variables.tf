@@ -1,13 +1,3 @@
-## Spot Credentials ##
-variable "spot_token" {
-	type = string
-}
-variable "spot_account" {
-	type = string
-	description = "Spot Account ID Ex: act-123e3127"
-}
-###################
-
 ## Ocean Variables ##
 variable "cluster_name" {
 	type = string
@@ -31,12 +21,9 @@ variable "subnet_ids" {
 	type = list(string)
 }
 variable "tags" {
-	type = list(object({
-		key = string
-		value = string
-	}))
-	default = null
-	description = "Tags to be added to resources"
+	type        = map(string)
+	default     = null
+	description = "Additional Tags to be added to resources"
 }
 variable "whitelist" {
 	type = list(string)

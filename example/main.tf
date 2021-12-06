@@ -1,9 +1,11 @@
+provider spotinst {
+    spotinst_token = "redacted"
+    spotinst_account = "redacted"
+}
+
 #### Create Ocean ECS Cluster ####
 module "ocean_ecs" {
     source = "../"
-
-    spot_token                      = "12345678901234567890"
-    spot_account                    = "act-123456789"
 
     cluster_name                    = "ECS-Workshop"
     region                          = "us-west-2"
@@ -12,7 +14,7 @@ module "ocean_ecs" {
     image_id                        = "ami-123456789"
     iam_instance_profile            = "arn:aws:iam::123456789:instance-profile/ecsInstanceRole"
 
-    tags = [{key = "CreatedBy", value = "terraform"},{key = "Env", value = "Dev"}]
+    tags = {CreatedBy = "terraform"}
 }
 
 output "Ocean_ID" {
