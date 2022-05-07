@@ -1,24 +1,11 @@
-terraform {
-    required_providers {
-        spotinst = {
-            source = "spotinst/spotinst"
-        }
-    }
-}
-
-data "aws_default_tags" "default_tags" {}
-
 #Create Spot.io Ocean ECS Cluster
-resource "spotinst_ocean_ecs" "example" {
-
+resource "spotinst_ocean_ecs" "ocean_ecs" {
     name                                = var.cluster_name
     cluster_name                        = var.cluster_name
     region                              = var.region
-
     min_size                            = var.min_size
     max_size                            = var.max_size
     desired_capacity                    = var.desired_capacity
-
     subnet_ids                          = var.subnet_ids
 
     # Default Provider Tags
@@ -38,7 +25,8 @@ resource "spotinst_ocean_ecs" "example" {
         }
     }
     whitelist 						    = var.whitelist
-    user_data                           = <<-EOF
+    blacklist                           = var.blacklist
+    user_data                           = var.user_data != null ? var.user_data : <<-EOF
     #!/bin/bash
     echo "ECS_CLUSTER=${var.cluster_name}" >> /etc/ecs/ecs.config
     EOF
@@ -48,18 +36,42 @@ resource "spotinst_ocean_ecs" "example" {
     key_pair                            = var.key_pair
     iam_instance_profile                = var.iam_instance_profile
     associate_public_ip_address         = var.associate_public_ip_address
-    monitoring                          = var.monitoring
-
-    ## Strategy ##
     utilize_reserved_instances          = var.utilize_reserved_instances
     draining_timeout                    = var.draining_timeout
-
+    monitoring                          = var.monitoring
     ebs_optimized                       = var.ebs_optimized
+    spot_percentage                     = var.spot_percentage
+    utilize_commitments                 = var.utilize_commitments
+
+    instance_metadata_options {
+        http_tokens                     = var.http_tokens
+        http_put_response_hop_limit     = var.http_put_response_hop_limit
+    }
+
+    ## Block Device Mappings ##
+    block_device_mappings {
+        device_name                     = var.device_name
+        ebs {
+            delete_on_termination       = var.delete_on_termination
+            encrypted                   = var.encrypted
+            iops                        = var.iops
+            kms_key_id                  = var.kms_key_id
+            snapshot_id                 = var.snapshot_id
+            volume_type                 = var.volume_type
+            volume_size                 = var.volume_size
+            throughput                  = var.throughput
+            dynamic_volume_size {
+                base_size               = var.base_size
+                resource                = var.resource
+                size_per_resource_unit  = var.size_per_resource_unit
+            }
+        }
+    }
 
     optimize_images {
-        perform_at = var.perform_at
-        time_windows = var.optimize_time_windows
-        should_optimize_ecs_ami = var.should_optimize_ecs_ami
+        perform_at                      = var.perform_at
+        time_windows                    = var.optimize_time_windows
+        should_optimize_ecs_ami         = var.should_optimize_ecs_ami
     }
 
     ## Autoscaler Settings ##
@@ -89,36 +101,17 @@ resource "spotinst_ocean_ecs" "example" {
         }
     }
 
-
-    ## Scheduled Task ##
-    scheduled_task {
-        shutdown_hours {
-            is_enabled                  = var.shutdown_is_enabled
-            time_windows                = var.shutdown_time_windows
-        }
-        tasks {
-            is_enabled                  = var.taskscheduling_is_enabled
-            cron_expression             = var.cron_expression
-            task_type                   = var.task_type
-        }
-    }
-
-    ## Block Device Mappings ##
-    block_device_mappings {
-        device_name                     = var.device_name
-        ebs {
-            delete_on_termination       = var.delete_on_termination
-            encrypted                   = var.encrypted
-            iops                        = var.iops
-            kms_key_id                  = var.kms_key_id
-            snapshot_id                 = var.snapshot_id
-            volume_type                 = var.volume_type
-            volume_size                 = var.volume_size
-            throughput                  = var.throughput
-            dynamic_volume_size {
-                base_size               = var.base_size
-                resource                = var.resource
-                size_per_resource_unit  = var.size_per_resource_unit
+    dynamic "scheduled_task" {
+        for_each = var.scheduled_task != null ? [var.scheduled_task] : []
+        content {
+            shutdown_hours{
+                is_enabled              = scheduled_task.value.is_enabled
+                time_windows            = scheduled_task.value.time_windows
+            }
+            tasks {
+                cron_expression         = scheduled_task.value.cron_expression
+                is_enabled              = scheduled_task.value.is_enabled
+                task_type               = scheduled_task.value.task_type
             }
         }
     }

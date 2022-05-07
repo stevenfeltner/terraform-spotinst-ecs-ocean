@@ -1,82 +1,200 @@
 ## Ocean Variables ##
+variable "name" {
+	type 		= string
+	description = "The Ocean cluster name."
+}
 variable "cluster_name" {
-	type = string
+	type 		= string
+	description = "The ECS cluster name."
 }
 variable "region" {
-	type = string
+	type 		= string
+	description = "The region the cluster will run in."
 }
 variable "max_size" {
-	type = number
-	default = 1000
+	type 		= number
+	default 	= 1000
+	description = "The upper limit of instances the cluster can scale up to."
 }
 variable "min_size" {
-	type = number
-	default = 0
+	type 		= number
+	default 	= 0
+	description = "The lower limit of instances the cluster can scale down to."
 }
 variable "desired_capacity" {
-	type = number
-	default = null
+	type 		= number
+	default 	= null
+	description = "The number of instances to launch and maintain in the cluster."
 }
 variable "subnet_ids" {
-	type = list(string)
+	type 		= list(string)
+	description = "A comma-separated list of subnet identifiers for the Ocean cluster. Subnet IDs should be configured with auto assign public ip."
 }
 variable "tags" {
 	type        = map(string)
 	default     = null
-	description = "Additional Tags to be added to resources"
+	description = "Optionally adds tags to instances launched in an Ocean cluster."
 }
 variable "whitelist" {
-	type = list(string)
-	default = ["a1.4xlarge","a1.2xlarge","a1.medium","a1.xlarge","a1.large","a1.metal","c5.large","c5.2xlarge","c5.24xlarge","c5.metal","c5.18xlarge","c5.4xlarge","c5.9xlarge","c5.xlarge","c5.12xlarge","c5d.4xlarge","c5d.large","c5d.18xlarge","c5d.2xlarge","c5d.9xlarge","c5d.xlarge","c5d.12xlarge","c5d.24xlarge","c5d.metal","m5.24xlarge","m5.12xlarge","m5.2xlarge","m5.16xlarge","m5.4xlarge","m5.xlarge","m5.large","m5.8xlarge","m5.metal","m5a.4xlarge","m5a.24xlarge","m5a.large","m5a.xlarge","m5a.8xlarge","m5a.2xlarge","m5a.12xlarge","m5a.16xlarge","m5ad.xlarge","m5ad.large","m5ad.24xlarge","m5ad.12xlarge","m5ad.2xlarge","m5ad.4xlarge","m5d.4xlarge","m5d.large","m5d.12xlarge","m5d.8xlarge","m5d.2xlarge","m5d.16xlarge","m5d.24xlarge","m5d.xlarge","m5d.metal","p3.2xlarge","p3.8xlarge","p3.16xlarge","r5.metal","r5.xlarge","r5.8xlarge","r5.16xlarge","r5.12xlarge","r5.large","r5.24xlarge","r5.4xlarge","r5.2xlarge","r5a.4xlarge","r5a.2xlarge","r5a.24xlarge","r5a.12xlarge","r5a.16xlarge","r5a.8xlarge","r5a.xlarge","r5a.large","r5ad.12xlarge","r5ad.xlarge","r5ad.large","r5ad.2xlarge","r5ad.24xlarge","r5ad.4xlarge","r5d.4xlarge","r5d.8xlarge","r5d.12xlarge","r5d.2xlarge","r5d.16xlarge","r5d.24xlarge","r5d.large","r5d.metal","r5d.xlarge"]
+	type 		= list(string)
+	default 	= null
+	description = "Instance types allowed in the Ocean cluster, Cannot be configured if blacklist is configured."
+}
+variable "blacklist" {
+	type 		= list(string)
+	default 	= null
+	description = "Instance types allowed in the Ocean cluster, Cannot be configured if whitelist is configured."
 }
 variable "user_data" {
-	type = string
-	default = null
+	type 		= string
+	default 	= null
+	description = "Base64-encoded MIME user data to make available to the instances."
 }
 variable "image_id" {
-	type = string
+	type 		= string
+	default 	= null
+	description = "ID of the image used to launch the instances."
 }
 variable "security_group_ids" {
-	type = list(string)
+	type 		= list(string)
+	description = "One or more security group ids."
 }
 variable "key_pair" {
-	type = string
-	default = ""
+	type 		= string
+	default 	= null
+	description = "The key pair to attach the instances."
 }
 variable "iam_instance_profile" {
-	type = string
+	type 		= string
+	default 	= null
+	description = "The instance profile iam role"
 }
 variable "associate_public_ip_address" {
-	type = bool
-	default = null
+	type 		= bool
+	default 	= null
+	description = "Configure public IP address allocation."
 }
 variable "utilize_reserved_instances" {
-	type = bool
-	default = true
+	type 		= bool
+	default 	= true
+	description = "If Reserved instances exist, Ocean will utilize them before launching Spot instances."
 }
 variable "draining_timeout" {
-	type = number
-	default = 120
+	type 		= number
+	default 	= 120
+	description = "The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation."
 }
 variable "monitoring" {
-	type = bool
-	default = false
+	type 		= bool
+	default 	= false
+	description = "Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used."
 }
 variable "ebs_optimized" {
-	type = bool
-	default = true
+	type 		= bool
+	default 	= true
+	description = "Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored."
+}
+variable "spot_percentage" {
+	type 		= number
+	default 	= null
+	description = "The percentage of Spot instances"
+}
+variable "utilize_commitments" {
+	type 		= bool
+	default 	= null
+	description = "If savings plans exist, Ocean will utilize them before launching Spot instances."
+}
+variable "http_tokens" {
+	type 		= string
+	default 	= null
+	description = "Determines if a signed token is required or not. Valid values: optional or required."
+}
+variable "http_put_response_hop_limit" {
+	type 		= number
+	default 	= null
+	description = "An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel."
+}
+###################
+## Block Device Mappings ##
+variable "device_name" {
+	type 		= string
+	default 	= null
+	description = "Set device name. Example: /dev/xvda1."
+}
+variable "delete_on_termination" {
+	type 		= bool
+	default 	= null
+	description = "Toggles EBS deletion upon instance termination."
+}
+variable "encrypted" {
+	type 		= bool
+	default 	= null
+	description = "Enables EBS encryption on the volume."
+}
+variable "iops" {
+	type 		= number
+	default 	= null
+	description = "Int. The number of I/O operations per second (IOPS) that the volume supports."
+}
+variable "kms_key_id" {
+	type 		= string
+	default 	= null
+	description = "Identifier (key ID, key alias, ID ARN, or alias ARN) for a customer managed CMK under which the EBS volume is encrypted."
+}
+variable "snapshot_id" {
+	type 		= string
+	default 	= null
+	description = "The snapshot ID to mount by."
+}
+variable "volume_type" {
+	type 		= string
+	default 	= null
+	description = "The type of the volume. Example: gp2."
+}
+variable "volume_size" {
+	type 		= number
+	default 	= null
+	description = "The size (in GB) of the volume."
+}
+variable "throughput" {
+	type 		= number
+	default 	= null
+	description = "The amount of data transferred to or from a storage device per second, you can use this param just in a case that volume_type = gp3."
+}
+##################
+
+## Dynamic Volume Size ##
+variable "base_size" {
+	type 		= number
+	default 	= 30
+	description = "Initial size for volume. Example: 50."
+}
+variable "resource" {
+	type 		= string
+	default 	= "CPU"
+	description = "Resource type to increase volume size dynamically by. Valid values: CPU."
+}
+variable "size_per_resource_unit" {
+	type 		= number
+	default 	= 20
+	description = "Additional size per resource unit (in GB). For example: if baseSize=50, and sizePerResourceUnit=20, and an instance with 2 CPU is launched - its disk size will be: 90GB"
+}
+variable "no_device" {
+	type 		= string
+	default 	= null
+	description = "Suppresses the specified device included in the block device mapping of the AMI."
 }
 ###################
 
 ## optimize images ##
 variable "perform_at" {
-	type 	= string
-	default = "always"
+	type 		= string
+	default 	= "always"
 	description = "Needs to be one of the following values: never/always/timeWindow."
 }
-variable "optimize_time_windows" {
-	type 	= list(string)
-	default = null
+variable "time_windows" {
+	type 		= list(string)
+	default 	= null
 	description = "Example: ['Sun:02:00-Sun:12:00', 'Wed:01:01-Fri:02:03']"
 }
 variable "should_optimize_ecs_ami" {
@@ -87,142 +205,104 @@ variable "should_optimize_ecs_ami" {
 
 ## Auto Scaler ##
 variable "autoscaler_is_enabled" {
-	type = bool
-	default = true
+	type 		= bool
+	default 	= true
+	description = "Enable the Ocean ECS autoscaler."
 }
 variable "autoscaler_is_auto_config" {
-	type = bool
-	default = true
+	type 		= bool
+	default 	= true
+	description = "Automatically configure and optimize headroom resources."
 }
 variable "cooldown" {
-	type = number
-	default = null
+	type 		= number
+	default 	= null
+	description = "Cooldown period between scaling actions."
 }
 ###################
 
 ## Headroom ##
 variable "cpu_per_unit" {
-	type = number
-	default = 0
+	type 		= number
+	default 	= 0
+	description = "Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU."
 }
 variable "memory_per_unit" {
-	type = number
-	default = 0
+	type 		= number
+	default 	= 0
+	description = "Optionally configure the amount of memory (MB) to allocate the headroom."
 }
 variable "num_of_units" {
-	type = number
-	default = 0
+	type 		= number
+	default 	= 0
+	description = "The number of units to retain as headroom, where each unit has the defined headroom CPU and memory."
 }
 ###################
 
 ## Down ##
 variable "max_scale_down_percentage" {
-	type = number
-	default = 10
+	type 		= number
+	default 	= 10
+	description = "Would represent the maximum % to scale-down. Number between 1-100."
 }
 variable "max_vcpu" {
-	type = number
-	default = null
+	type 		= number
+	default 	= null
+	description = "The maximum cpu in vCPU units that can be allocated to the cluster."
 }
 variable "max_memory_gib" {
-	type = number
-	default = null
+	type 		= number
+	default 	= null
+	description = "The maximum memory in GiB units that can be allocated to the cluster."
+}
+variable "auto_headroom_percentage" {
+	type 		= number
+	default 	= null
+	description = "The auto-headroom percentage. Set a number between 0-200 to control the headroom % of the cluster. Relevant when isAutoConfig= true."
 }
 ###################
 
 ## Update Policy ##
 variable "should_roll" {
-	type = bool
-	default = false
+	type 		= bool
+	default 	= false
+	description = "Enables the roll."
+}
+variable "conditional_roll" {
+	type 		= bool
+	default 	= false
+	description = "Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc)."
+}
+variable "auto_apply_tags" {
+	type 		= bool
+	default 	= false
+	description = "will update instance tags on the fly without rolling the cluster."
 }
 variable "batch_size_percentage" {
-	type = number
-	default = 20
+	type 		= number
+	default 	= 20
+	description = "Sets the percentage of the instances to deploy in each batch."
+}
+variable "batch_min_healthy_percentage" {
+	type 		= number
+	default 	= 50
+	description = "Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch."
 }
 ###################
 
 ## Scheduled Task ##
-# shutdown_hours #
-variable "shutdown_is_enabled" {
-	type = bool
-	default = false
+variable "scheduled_task" {
+	type 							= object({
+		shutdown_is_enabled 		= bool
+		shutdown_time_windows 		= list(string)
+		taskscheduling_is_enabled 	= bool
+		cron_expression 			= string
+		task_type 					= string
+	})
+	default 						= null
+	description 					= "Scheduled Tasks Block"
 }
-variable "shutdown_time_windows" {
-	type = list(string)
-	default = ["Sat:20:00-Sun:04:00","Sun:20:00-Mon:04:00"]
-}
-# task scheduling #
-variable "taskscheduling_is_enabled" {
-	type = bool
-	default = false
-}
-variable "cron_expression" {
-	type = string
-	default = "0 1 * * *"
-}
-variable "task_type" {
-	type = string
-	default = "clusterRoll"
-	description = "Available Action Types: 'clusterRoll'"
-}
-###################
 
-## Block Device Mappings ##
-variable "device_name" {
-	type = string
-	default = ""
-}
-variable "delete_on_termination" {
-	type = string
-	default = null
-}
-variable "encrypted" {
-	type = bool
-	default = null
-}
-variable "iops" {
-	type = string
-	default = null
-}
-variable "kms_key_id" {
-	type = string
-	default = null
-}
-variable "snapshot_id" {
-	type = string
-	default = null
-}
-variable "volume_type" {
-	type = string
-	default = null
-}
-variable "volume_size" {
-	type = number
-	default = null
-}
-variable "throughput" {
-	type = number
-	default = null
-}
-###################
 
-## Dynamic Volume Size ##
-variable "base_size" {
-	type = number
-	default = 30
-}
-variable "resource" {
-	type = string
-	default = "CPU"
-	description = "resource must be one of [CPU]"
-}
-variable "size_per_resource_unit" {
-	type = number
-	default = 20
-	description = "Additional size per resource unit (in GB). For example: if baseSize=50, and sizePerResourceUnit=20, and an instance with 2 CPU is launched - its disk size will be: 90GB"
-}
-variable "no_device" {
-	type = string
-	default = null
-}
-##################
+
+

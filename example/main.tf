@@ -17,6 +17,6 @@ module "ocean_ecs" {
     tags = {CreatedBy = "terraform"}
 }
 
-output "Ocean_ID" {
+output "ocean_id" {
     value = module.ocean_ecs.ocean_id
 }
