@@ -1,6 +1,6 @@
 #Create Spot.io Ocean ECS Cluster
 resource "spotinst_ocean_ecs" "ocean_ecs" {
-    name                                = var.cluster_name
+    name                                = var.name == null ? var.cluster_name : var.name
     cluster_name                        = var.cluster_name
     region                              = var.region
     min_size                            = var.min_size
@@ -25,7 +25,7 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
         }
     }
     whitelist 						    = var.whitelist
-    blacklist                           = var.blacklist
+    #blacklist                           = var.blacklist
     user_data                           = var.user_data != null ? var.user_data : <<-EOF
     #!/bin/bash
     echo "ECS_CLUSTER=${var.cluster_name}" >> /etc/ecs/ecs.config
@@ -43,34 +43,41 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
     spot_percentage                     = var.spot_percentage
     utilize_commitments                 = var.utilize_commitments
 
-    instance_metadata_options {
-        http_tokens                     = var.http_tokens
-        http_put_response_hop_limit     = var.http_put_response_hop_limit
+    dynamic "instance_metadata_options" {
+        for_each = (var.http_tokens != null && var.http_put_response_hop_limit != null) ? [1] : []
+        content {
+            http_tokens                     = var.http_tokens
+            http_put_response_hop_limit     = var.http_put_response_hop_limit
+        }
     }
 
     ## Block Device Mappings ##
-    block_device_mappings {
-        device_name                     = var.device_name
-        ebs {
-            delete_on_termination       = var.delete_on_termination
-            encrypted                   = var.encrypted
-            iops                        = var.iops
-            kms_key_id                  = var.kms_key_id
-            snapshot_id                 = var.snapshot_id
-            volume_type                 = var.volume_type
-            volume_size                 = var.volume_size
-            throughput                  = var.throughput
-            dynamic_volume_size {
-                base_size               = var.base_size
-                resource                = var.resource
-                size_per_resource_unit  = var.size_per_resource_unit
+    dynamic "block_device_mappings" {
+        for_each = var.block_device_mappings != null ? [var.block_device_mappings] : []
+        content {
+            device_name = block_device_mappings.value.device_name
+            no_device                   = block_device_mappings.value.no_device
+            ebs {
+                delete_on_termination       = block_device_mappings.value.delete_on_termination
+                encrypted                   = block_device_mappings.value.encrypted
+                iops                        = block_device_mappings.value.iops
+                kms_key_id                  = block_device_mappings.value.kms_key_id
+                snapshot_id                 = block_device_mappings.value.snapshot_id
+                volume_type                 = block_device_mappings.value.volume_type
+                volume_size                 = block_device_mappings.value.volume_size
+                throughput                  = block_device_mappings.value.throughput
+                dynamic_volume_size {
+                    base_size               = block_device_mappings.value.base_size
+                    resource                = block_device_mappings.value.resource
+                    size_per_resource_unit  = block_device_mappings.value.size_per_resource_unit
+                }
             }
         }
     }
 
     optimize_images {
         perform_at                      = var.perform_at
-        time_windows                    = var.optimize_time_windows
+        time_windows                    = var.time_windows
         should_optimize_ecs_ami         = var.should_optimize_ecs_ami
     }
 

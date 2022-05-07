@@ -1,6 +1,7 @@
 ## Ocean Variables ##
 variable "name" {
 	type 		= string
+	default 	= null
 	description = "The Ocean cluster name."
 }
 variable "cluster_name" {
@@ -40,11 +41,11 @@ variable "whitelist" {
 	default 	= null
 	description = "Instance types allowed in the Ocean cluster, Cannot be configured if blacklist is configured."
 }
-variable "blacklist" {
-	type 		= list(string)
-	default 	= null
-	description = "Instance types allowed in the Ocean cluster, Cannot be configured if whitelist is configured."
-}
+#variable "blacklist" {
+#	type 		= list(string)
+#	default 	= null
+#	description = "Instance types allowed in the Ocean cluster, Cannot be configured if whitelist is configured."
+#}
 variable "user_data" {
 	type 		= string
 	default 	= null
@@ -116,75 +117,26 @@ variable "http_put_response_hop_limit" {
 }
 ###################
 ## Block Device Mappings ##
-variable "device_name" {
-	type 		= string
-	default 	= null
-	description = "Set device name. Example: /dev/xvda1."
-}
-variable "delete_on_termination" {
-	type 		= bool
-	default 	= null
-	description = "Toggles EBS deletion upon instance termination."
-}
-variable "encrypted" {
-	type 		= bool
-	default 	= null
-	description = "Enables EBS encryption on the volume."
-}
-variable "iops" {
-	type 		= number
-	default 	= null
-	description = "Int. The number of I/O operations per second (IOPS) that the volume supports."
-}
-variable "kms_key_id" {
-	type 		= string
-	default 	= null
-	description = "Identifier (key ID, key alias, ID ARN, or alias ARN) for a customer managed CMK under which the EBS volume is encrypted."
-}
-variable "snapshot_id" {
-	type 		= string
-	default 	= null
-	description = "The snapshot ID to mount by."
-}
-variable "volume_type" {
-	type 		= string
-	default 	= null
-	description = "The type of the volume. Example: gp2."
-}
-variable "volume_size" {
-	type 		= number
-	default 	= null
-	description = "The size (in GB) of the volume."
-}
-variable "throughput" {
-	type 		= number
-	default 	= null
-	description = "The amount of data transferred to or from a storage device per second, you can use this param just in a case that volume_type = gp3."
+variable "block_device_mappings" {
+	type 								= object({
+		device_name						= string
+		delete_on_termination 			= bool
+		encrypted 						= bool
+		iops 							= number
+		kms_key_id 						= string
+		snapshot_id 					= string
+		volume_type 					= string
+		volume_size						= number
+		throughput						= number
+		base_size						= number
+		resource 						= string
+		size_per_resource_unit			= number
+		no_device 						= string
+	})
+	default 							= null
+	description 						= "Block Device Mapping Object"
 }
 ##################
-
-## Dynamic Volume Size ##
-variable "base_size" {
-	type 		= number
-	default 	= 30
-	description = "Initial size for volume. Example: 50."
-}
-variable "resource" {
-	type 		= string
-	default 	= "CPU"
-	description = "Resource type to increase volume size dynamically by. Valid values: CPU."
-}
-variable "size_per_resource_unit" {
-	type 		= number
-	default 	= 20
-	description = "Additional size per resource unit (in GB). For example: if baseSize=50, and sizePerResourceUnit=20, and an instance with 2 CPU is launched - its disk size will be: 90GB"
-}
-variable "no_device" {
-	type 		= string
-	default 	= null
-	description = "Suppresses the specified device included in the block device mapping of the AMI."
-}
-###################
 
 ## optimize images ##
 variable "perform_at" {
