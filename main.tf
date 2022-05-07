@@ -36,7 +36,7 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
     echo "ECS_CLUSTER=${var.cluster_name}" >> /etc/ecs/ecs.config
     EOF
 
-    image_id                            = var.image_id
+    image_id                            = var.image_id == null ? data.aws_ami.ecs_ami.id : var.image_id
     security_group_ids                  = var.security_group_ids
     key_pair                            = var.key_pair
     iam_instance_profile                = var.iam_instance_profile
