@@ -8,6 +8,11 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
     desired_capacity                    = var.desired_capacity
     subnet_ids                          = var.subnet_ids
 
+    lifecycle {
+        ignore_changes = [
+            desired_capacity
+        ]
+    }
     # Default Provider Tags
     dynamic tags {
         for_each = data.aws_default_tags.default_tags.tags
