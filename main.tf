@@ -65,7 +65,12 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
             ebs {
                 delete_on_termination       = block_device_mappings.value.delete_on_termination
                 encrypted                   = block_device_mappings.value.encrypted
-                iops                        = block_device_mappings.value.iops
+                dynamic "iops" {
+                    for_each = block_device_mappings.value.volume_type == "gp2" ? [] : [1]
+                    content {
+                        iops                = block_device_mappings.value.iops
+                    }
+                }
                 kms_key_id                  = block_device_mappings.value.kms_key_id
                 snapshot_id                 = block_device_mappings.value.snapshot_id
                 volume_type                 = block_device_mappings.value.volume_type
