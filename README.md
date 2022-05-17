@@ -1,5 +1,3 @@
-# ECS on Spot.io
-
 # Spot Ocean ECS Terraform Module
 
 ## Prerequisites

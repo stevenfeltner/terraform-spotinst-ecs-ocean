@@ -71,10 +71,13 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
                 volume_type                 = block_device_mappings.value.volume_type
                 volume_size                 = block_device_mappings.value.volume_size
                 throughput                  = block_device_mappings.value.throughput
-                dynamic_volume_size {
-                    base_size               = block_device_mappings.value.base_size
-                    resource                = block_device_mappings.value.resource
-                    size_per_resource_unit  = block_device_mappings.value.size_per_resource_unit
+                dynamic dynamic_volume_size {
+                    for_each = var.dynamic_volume_size != null ? [var.dynamic_volume_size] : []
+                    content {
+                        base_size               = dynamic_volume_size.value.base_size
+                        resource                = dynamic_volume_size.value.resource
+                        size_per_resource_unit  = dynamic_volume_size.value.size_per_resource_unit
+                    }
                 }
             }
         }
