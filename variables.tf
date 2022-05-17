@@ -123,10 +123,10 @@ variable "block_device_mappings" {
 		device_name						= string
 		delete_on_termination 			= bool
 		encrypted 						= bool
-		iops 							= number
 		kms_key_id 						= string
 		snapshot_id 					= string
 		volume_type 					= string
+		iops							= number
 		volume_size						= number
 		throughput						= number
 		no_device 						= string
@@ -134,7 +134,6 @@ variable "block_device_mappings" {
 	default 							= null
 	description 						= "Block Device Mapping Object"
 }
-
 variable "dynamic_volume_size" {
 	type 					  			= object({
 		base_size						= number

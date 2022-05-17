@@ -5,7 +5,7 @@ provider spotinst {
 
 #### Create Ocean ECS Cluster ####
 module "ocean_ecs" {
-    source = "../"
+    source = "stevenfeltner/ecs-ocean/spotinst"
 
     cluster_name                    = "ECS-Workshop"
     region                          = "us-west-2"
