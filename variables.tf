@@ -265,7 +265,7 @@ variable "scheduled_task" {
 #####################
 
 ## S3 Logging ##
-variable data_integration_id {
+variable "data_integration_id" {
     type 		= string
 	default 	= null
 	description = "The identifier of The S3 data integration to export the logs to."
