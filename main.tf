@@ -48,6 +48,18 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
     spot_percentage                     = var.spot_percentage
     utilize_commitments                 = var.utilize_commitments
 
+    ## S3 Logging ##
+    dynamic "logging" {
+        for_each = var.data_integration_id != null ? [var.data_integration_id] : []
+        content {
+            export {
+                s3 {
+                    id = var.data_integration_id
+                }
+            }
+        }
+    }
+
     dynamic "instance_metadata_options" {
         for_each = (var.http_tokens != null && var.http_put_response_hop_limit != null) ? [1] : []
         content {
