@@ -45,6 +45,7 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
     draining_timeout                    = var.draining_timeout
     monitoring                          = var.monitoring
     ebs_optimized                       = var.ebs_optimized
+    use_as_template_only        	    = var.use_as_template_only
     spot_percentage                     = var.spot_percentage
     utilize_commitments                 = var.utilize_commitments
 

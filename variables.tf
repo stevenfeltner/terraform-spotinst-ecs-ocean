@@ -95,6 +95,12 @@ variable "ebs_optimized" {
 	default 	= true
 	description = "Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored."
 }
+
+variable "use_as_template_only" {
+  type        = bool
+  default     = false
+  description = "When set to true, use the defalut VNG only as a template for other VNGs"
+}
 variable "spot_percentage" {
 	type 		= number
 	default 	= null
