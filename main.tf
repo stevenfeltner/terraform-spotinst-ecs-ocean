@@ -107,6 +107,7 @@ resource "spotinst_ocean_ecs" "ocean_ecs" {
         is_enabled                      = var.autoscaler_is_enabled
         is_auto_config                  = var.autoscaler_is_auto_config
         cooldown                        = var.cooldown
+        auto_headroom_percentage        = var.auto_headroom_percentage
         headroom {
             cpu_per_unit                = var.cpu_per_unit
             memory_per_unit             = var.memory_per_unit
